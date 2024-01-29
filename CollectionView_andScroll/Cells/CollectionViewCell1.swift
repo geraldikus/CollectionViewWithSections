@@ -7,13 +7,14 @@
 
 import UIKit
 
-class CollectionViewCell: UICollectionViewCell {
+class CollectionViewCell1: UICollectionViewCell {
     static let identifier = "cell"
     
     private let imageView: UIImageView = {
         let image = UIImageView()
         image.backgroundColor = .systemMint
         image.translatesAutoresizingMaskIntoConstraints = false
+        image.layer.cornerRadius = 10
         return image
     }()
     
@@ -28,7 +29,7 @@ class CollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         contentView.backgroundColor = .systemGray5
-        
+        contentView.layer.cornerRadius = 10
         addElementsOnView()
         setupConstraints()
     }
