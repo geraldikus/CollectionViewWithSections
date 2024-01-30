@@ -22,7 +22,7 @@ class CollectionViewCell2: UICollectionViewCell {
         super.init(frame: frame)
         contentView.backgroundColor = .magenta
         addSubview(friendName)
-        self.clipsToBounds = true
+        contentView.layer.cornerRadius = 10
     }
     
     func configure(with chat: String) {

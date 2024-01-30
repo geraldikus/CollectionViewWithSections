@@ -87,7 +87,7 @@ class ListViewController: UIViewController {
         let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
         
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = NSDirectionalEdgeInsets.init(top: 46, leading: 20, bottom: 0, trailing: 20)
+        section.contentInsets = NSDirectionalEdgeInsets.init(top: 26, leading: 20, bottom: 0, trailing: 20)
         
         return section
     }
@@ -132,6 +132,7 @@ class ListViewController: UIViewController {
         
         dataSource?.apply(snapshot)
     }
+
     
     private func addMockData() {
         let chat1 = MChat(friendName: "Alice", friendImage: "alice_image", lastMessage: "Hello!")
@@ -149,12 +150,15 @@ class ListViewController: UIViewController {
         // Создаем секцию с моковыми данными
         let section = MSection(type: "Type1", title: "Hello durak", items: [chat1, chat2, chat3])
         
-        let section1 = MSection(type: "Type2", title: "Title2", items: [chat4, chat5, chat6])
+        let section2 = MSection(type: "Type2", title: "Title2", items: [chat4, chat5, chat6])
         
         let section3 = MSection(type: "Type3", title: "Title3", items: [chat7, chat8, chat9, chat10])
-        sections.append(section)
-        sections.append(section1)
+        
+        // Код ниже: то, в каком порядке будут расположены секции
+        
         sections.append(section3)
+        sections.append(section)
+        sections.append(section2)
     }
     
 }
