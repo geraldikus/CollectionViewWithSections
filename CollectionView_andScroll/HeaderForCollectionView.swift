@@ -7,14 +7,14 @@
 
 import UIKit
 
-class MyHeaderView: UICollectionReusableView {
+class SectionHeader: UICollectionReusableView {
     
-    static let sectionHeader = "SectionHeader"
+    static let reuseId = "SectionHeader"
     
-    private let label: UILabel = {
+    let label: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 16, weight: .bold)
-        label.textColor = .black
+
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()

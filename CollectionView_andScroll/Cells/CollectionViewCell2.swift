@@ -23,6 +23,14 @@ class CollectionViewCell2: UICollectionViewCell {
         contentView.backgroundColor = .magenta
         addSubview(friendName)
         contentView.layer.cornerRadius = 10
+        setupConstraints()
+    }
+    
+    private func setupConstraints() {
+        NSLayoutConstraint.activate([
+            friendName.centerXAnchor.constraint(equalTo: centerXAnchor),
+            friendName.centerYAnchor.constraint(equalTo: centerYAnchor)
+        ])
     }
     
     func configure(with chat: String) {

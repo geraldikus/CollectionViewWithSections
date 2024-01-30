@@ -28,14 +28,13 @@ class ListViewController: UIViewController {
     private func setupCollectionView() {
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createCompositionalLayout())
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        collectionView.backgroundColor = .systemGray
+        collectionView.backgroundColor = .systemBackground
         view.addSubview(collectionView)
         collectionView.register(CollectionViewCell1.self, forCellWithReuseIdentifier: CollectionViewCell1.identifier)
         
         collectionView.register(CollectionViewCell2.self, forCellWithReuseIdentifier: CollectionViewCell2.reuseId)
         
-//        collectionView.delegate = self
-//        collectionView.dataSource = self
+        collectionView.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: SectionHeader.reuseId)
     }
     
     // section -> groups -> items -> size
@@ -47,9 +46,9 @@ class ListViewController: UIViewController {
             
             switch section.type {
             case "Type1":
-                return self.createFirstChatSection()
+                return self.createVerticalSection()
             case "Type2":
-                return self.createFirstChatSection()
+                return self.createVerticalSection()
             default:
                 return self.createHorizontalSection()
             }
@@ -62,7 +61,7 @@ class ListViewController: UIViewController {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1))
         
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        item.contentInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 8, bottom: 0, trailing: 8)
+        item.contentInsets = NSDirectionalEdgeInsets.init(top: 0, leading: 0, bottom: 0, trailing: 8)
         
         let groupSize = NSCollectionLayoutSize(widthDimension: .estimated(104), heightDimension: .estimated(88))
         
@@ -70,13 +69,17 @@ class ListViewController: UIViewController {
         
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .continuous
-        section.contentInsets = NSDirectionalEdgeInsets.init(top: 16, leading: 12, bottom: 0, trailing: 12)
+        section.contentInsets = NSDirectionalEdgeInsets.init(top: 12, leading: 20, bottom: 6, trailing: 12)
+        
+        let header = createSectionHeader()
+        
+        section.boundarySupplementaryItems = [header]
         
         return section
     }
     
     
-    func createFirstChatSection() -> NSCollectionLayoutSection {
+    func createVerticalSection() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(86))
         
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
@@ -87,9 +90,27 @@ class ListViewController: UIViewController {
         let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
         
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = NSDirectionalEdgeInsets.init(top: 26, leading: 20, bottom: 0, trailing: 20)
+        section.contentInsets = NSDirectionalEdgeInsets.init(top: 12, leading: 20, bottom: 0, trailing: 20)
+        
+        let header = createSectionHeader()
+        
+        section.boundarySupplementaryItems = [header]
         
         return section
+    }
+    
+    func createSectionHeader() -> NSCollectionLayoutBoundarySupplementaryItem {
+        
+        let layoutSectionHeaderSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1),
+            heightDimension: .estimated(1))
+        
+        let layoutSectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: layoutSectionHeaderSize,
+            elementKind: UICollectionView.elementKindSectionHeader,
+            alignment: .top)
+        
+        return layoutSectionHeader
     }
     
     func createDataSource() {
@@ -111,15 +132,28 @@ class ListViewController: UIViewController {
                 cell?.configure(with: chat.friendName)
                 return cell
             }
-            
-            
-            
-            
-            
-//            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionViewCell1.identifier, for: indexPath) as? CollectionViewCell1 else { return UICollectionViewCell() }
-//            cell.setupText(with: chat.lastMessage)
-//            return cell
         })
+        
+        
+        // For header
+        
+        
+        dataSource?.supplementaryViewProvider = {
+            collectionView, kind, indexPath in
+            guard let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: SectionHeader.reuseId, for: indexPath) as? SectionHeader else { return nil }
+            
+            guard let firstItem = self.dataSource?.itemIdentifier(for: indexPath) else { return nil}
+            
+            guard let section = self.dataSource?.snapshot().sectionIdentifier(containingItem: firstItem) else { return nil }
+            
+            if section.title.isEmpty {
+                return nil
+            }
+            
+            sectionHeader.label.text = section.title
+            
+            return sectionHeader
+        }
     }
     
     func reloadData() {
@@ -148,11 +182,11 @@ class ListViewController: UIViewController {
 
         
         // Создаем секцию с моковыми данными
-        let section = MSection(type: "Type1", title: "Hello durak", items: [chat1, chat2, chat3])
+        let section = MSection(type: "Type1", title: "Friends Messages", items: [chat1, chat2, chat3])
         
-        let section2 = MSection(type: "Type2", title: "Title2", items: [chat4, chat5, chat6])
+        let section2 = MSection(type: "Type2", title: "Friends Old Messages", items: [chat4, chat5, chat6])
         
-        let section3 = MSection(type: "Type3", title: "Title3", items: [chat7, chat8, chat9, chat10])
+        let section3 = MSection(type: "Type3", title: "Friends Name", items: [chat7, chat8, chat9, chat10])
         
         // Код ниже: то, в каком порядке будут расположены секции
         
@@ -162,30 +196,6 @@ class ListViewController: UIViewController {
     }
     
 }
-
-//extension ListViewController: UICollectionViewDataSource, UICollectionViewDelegate {
-//    
-//    func numberOfSections(in collectionView: UICollectionView) -> Int {
-//        return 1
-//    }
-//    
-//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        return 10
-//    }
-//    
-//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionViewCell.identifier, for: indexPath) as? CollectionViewCell else {
-//            return CollectionViewCell()
-//        }
-//        
-//        cell.setupText(with: "Hello world")
-//        
-//        return cell
-//    }
-//}
-
-
-
 
 // MARK: - For Canvas
 
